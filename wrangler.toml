@@ -1,0 +1,33 @@
+name = "vue-jobs"
+compatibility_date = "2024-01-01"
+main = "dist/index.html"
+
+[site]
+bucket = "./dist"
+
+[build]
+command = "npm run build"
+output_dir = "dist"
+
+# 如果你需要环境变量，可以在这里定义
+[vars]
+API_URL = "https://your-api-url.com"
+
+[[routes]]
+pattern = "/*"
+script = """
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+
+async function handleRequest(request) {
+  const response = await fetch(request)
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      'content-type': response.headers.get('content-type'),
+      'cache-control': 'public, max-age=0, must-revalidate'
+    }
+  })
+}
+"""
